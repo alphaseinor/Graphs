@@ -58,17 +58,21 @@ class Graph:
         s = Stack()
         s.push(starting_vertex)
         visited = set()
+        v = []
 
-        while s.size():
+        while s.size() > 0:
             v = s.pop()
+            current_vertex = v[-1]
 
-            if v not in visited:
-                visited.add(v)
-                print(v)
-                neighbors = self.get_neighbors(v)
+            if current_vertex not in visited:
+                visited.add(current_vertex)
+                # print(v)
+                # neighbors = self.get_neighbors(v)
 
-                for neighbor in neighbors:
-                    s.push(neighbor)
+                for neighbor in self.get_neighbors(current_vertex):
+                    v.append(neighbor)
+                    s.push(v)
+        return v
 
     def dft_recursive(self, starting_vertex, visited = None):
         """
@@ -118,23 +122,31 @@ class Graph:
         starting_vertex to destination_vertex in
         depth-first order.
         """
+
+        if starting_vertex not in destination_vertex:
+            print("no match")
+            return []
+
         s = Stack()
         s.push([starting_vertex])
-        visited = set()
+        visited = []
+
+        # print("before while")
 
         while s.size():
+            # print("in while")
             path = s.pop()
             node = path[-1]
 
             if node not in visited:
-                visited.add(node)
-                if node == destination_vertex:
-                    return path
+                # print("in if")
+                visited.append(node)
 
-                for neighbor in self.get_neighbors(node):
-                    s.push(path + [neighbor])
+                for parent in destination_vertex.get(node, []):
+                    # print("in for")
+                    s.push(path + [parent])
 
-        return None
+        return visited[-1]
 
     def dfs_recursive(self, starting_vertex, destination_vertex, visited=set(), path=[]):
         """
